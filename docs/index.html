@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenCitations - Coronavirus open citations visualisation</title>
+    <link rel="stylesheet" href="css/pure-min.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="css/layouts/side-menu-old-ie.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="css/layouts/side-menu.css">
+    <!--<![endif]-->
+    <link rel="stylesheet" href="css/grids-responsive-min.css" />
+    <style>
+        #cy {
+            width: 95%;
+            max-width: 500px;
+            height: 500px;
+            border: 1px solid black;
+        }
+    
+        #info {
+            font-size: 85%;
+        }
+        #info p {
+            line-height: 1.2;
+            margin: 0px;
+        }
+        #info img {
+            height: 9pt;
+            margin-right: 5px;
+        }
+        #legend div p {
+            margin: 0px;
+            font-size: 85%;
+        }
+        #info h3 {
+            margin: 0px;
+            padding-top: 15px;
+        } 
+        footer {
+            text-align: center;
+        }
+        footer img {
+            max-width: 80px;
+        }
+    </style>
+  </head>
+  <body>
+      <div id="layout">
+         <!-- Menu toggle -->
+         <a href="#menu" id="menuLink" class="menu-link">
+            <!-- Hamburger icon -->
+            <span></span>
+         </a>
+
+         <div id="menu">
+            <div class="pure-menu">
+               <a class="pure-menu-heading" href="#">HOME</a>
+
+               <ul class="pure-menu-list">
+                  <li class="pure-menu-item"><a href="#visualisation" class="pure-menu-link">The visualisation</a></li>
+                  <li class="pure-menu-item"><a href="#howto" class="pure-menu-link">How it works</a></li>
+                  <li class="pure-menu-item"><a href="#data" class="pure-menu-link">The data</a></li>
+                   <li class="pure-menu-item"><a href="#help" class="pure-menu-link">Help us</a></li>
+                  <li class="pure-menu-item"><a href="#contacts" class="pure-menu-link">Contacts</a></li>
+               </ul>
+            </div>
+         </div>
+
+         <div id="main">
+            <div class="header">
+               <h1>Coronavirus open citations visualisation</h1>
+               <h2>Showing works published in the past 20 years using open data by OpenCitations and Crossref</h2>
+            </div>
+
+            <div class="content">
+                <h2 id="visualisation" class="content-subhead">The visualisation</h2>
+                <p>The following visualisation shows the most relevant articles investigating <a href="https://en.wikipedia.org/wiki/Coronavirus">coronaviruses</a> in the past 20 years, considering those published in three distinct periods characterised by three primary related diseases: <a href="https://en.wikipedia.org/wiki/SARS">SARS</a>, <a href="https://en.wikipedia.org/wiki/MERS">MERS</a>, <a href="https://en.wikipedia.org/wiki/COVID-19">COVID-19</a>. The more an article is close to the centre of the circle shown, the more it is linked with the other articles. Clicking on an article will show its metadata on the right and all the other articles related to it through citations.</p>
+                <div class="pure-g">
+                    <div class="pure-u-1 pure-u-md-2-3">
+                        <div id="cy"></div>
+                    </div>
+                    <div class="pure-u-1 pure-u-md-1-3">
+                        <div id="info">
+                            <h3 class="content-subhead">Citations received</h3>
+                            <p><img src="img/circle.png" /> citations ≤ 10</p>
+                            <p><img src="img/diamond.png" /> 10 &lt; citations ≤ 100</p>
+                            <p><img src="img/pentagon.png" /> 100 &lt; citations ≤ 500</p>
+                            <p><img src="img/star.png" /> > 500 citations</p>
+                            
+                            <h3 class="content-subhead">Publication dates</h3>
+                            <p><img src="img/c1.png" /> pre-SARS period (before 2003)</p>
+                            <p><img src="img/c2.png" /> SARS period (between 2003 and 2011)</p>
+                            <p><img src="img/c3.png" /> MERS period (between 2012 and 2019)</p>
+                            <p><img src="img/c4.png" /> COVID-19 period (since 2020)</p>
+                            
+                            <h3 class="content-subhead">Metadata of selected article</h3>
+                            <p id="ref">None selected</p>
+                            <p id="cited"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 id="howto" class="content-subhead">How it works</h2>
+                <p>We developed <a href="https://github.com/opencitations/coronavirus/data.ipynb">a Python notebook</a> to retrieve all the data used in the visualisation. We got a list of relevant articles talking about coronaviruses using the <a href="https://api.crossref.org">Crossref API</a>. We looked for all the articles which contain the word <q>coronavirus</q> either in their title or abstract (total: 9,087 articles, as of 12 April 2020). Then, we retrieved all the citations which involve these articles, either as a citing entity or as a cited entity. We used the <a href="http://opencitations.net/index/api/v1">unifying REST API</a> for all the <a href="http://opencitations.net/index">OpenCitations Indexes</a> (total: 124,295 citations, as of 12 April 2020). Finally, we used the Crossref API again to identify all the basic metadata (i.e. authors, year of publication, title, publication venue, and DOI) of the articles involved in all the citations retrieved (total: 42,213 articles, as of 12 April 2020). In the case Crossref did not return any metadata for some article, we completed the related metadata hand.</p>
+                <p>We showed only a partial subset of the articles and the related citations in the visualisation, mainly for computational purposes. Indeed, it would be too much expensive to create a diagram which includes all the articles and citations retrieved, which would make unclear and unusable the visualisation. In particular, we considered only the citations having both the citing entity and the cited entity included in the set of relevant articles talking about coronaviruses retrieved through the Crossref API. Also, we visualised only the articles that received, overall, at least ten citations per year since their publication date. We obtained 560 citations between 93 articles.</p>
+                <p>We created the visualisation using <a href="https://js.cytoscape.org/">Cytoscape JS</a> and <a href="https://jquery.com/">JQuery</a>. We used <a href="https://purecss.io/">Pure CSS</a> to define the layout of the website.. All the software, data, and additional material used for creating this website and the related data are available in our <a href="https://github.com/opencitations/coronavirus/">GitHub repository</a>.</p>
+                
+                <h2 id="data" class="content-subhead">The data</h2>
+                <p>The full set of data retrieved by running the notebook, both citations and article metadata, have been stored in JSON format compatible with the one used by Cytoscape JS for visualising data. The data are available on <a href="https://zenodo.org">Zenodo</a>:</p>
+                <blockquote>
+                    <p>Peroni, S. (2020). Coronavirus open citation data. Version 1.0. Zenodo. <a href="https://doi.org/10.5281/zenodo.3756803">https://doi.org/10.5281/zenodo.3756803</a></p>
+                </blockquote>
+                <p>We released all the data in <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode">CC0</a> to enable anyone to use them for any purpose.</p>
+                <p>Currently, the data do not include articles published in 2020, since the last release of <a href="http://opencitations.net/index/coci">COCI, the OpenCitations Index of Crossref open DOI-to-DOI citations</a>, which is the most significant dataset of open citation data released by OpenCitations, includes citations of articles published until October 2019. We will release new versions of these data when future releases of COCI will be available, or when new citation data will be published in <a href="http://opencitations.net/index/croci">CROCI, the Crowdsourced Citation Index</a>.</p>
+
+                <h2 id="help" class="content-subhead">Help us</h2>
+                <p>Currently (as of 12 April 2020) there are no articles published in 2020 (i.e. about COVID-19) included in the visualisation and the full data released, due to the absence of citations involving any of these articles in the <a href="http://opencitations.net/index">OpenCitations Indexes</a>. Of course, the situation will improve once the new release of <a href="http://opencitations.net/index/coci">COCI</a> will be published.</p>
+                <p>However, even considering future releases of COCI, we will still miss several relevant citations such as those coming from articles of publishers that are not participating to the <a href="https://i4oc.org">Initiative for Open Citations (I4OC)</a> or those coming from preprints that do not also deposit their citation data in Crossref. You can help in improving this situation by sharing citation data in CROCI.</p>
+                <p><a href="http://opencitations.net/index/croci">CROCI, the Crowdsourced Citation Index</a>, is an OpenCitations Index containing citations deposited by individuals. We described the rationale and the main ideas behind the development of CROCI in <a href="https://arxiv.org/abs/1902.02534">an article</a> published in the proceedings of the <a href="https://www.issi2019.org/">17th International Conference on Scientometrics and Informetrics</a>, held in Rome in September 2019. We described the procedure to follow for adding new citation data into CROCI in the <a href="https://github.com/opencitations/croci">CROCI GitHub repository</a>.</p>
+                
+                <h2 id="contacts" class="content-subhead">Contacts</h2>
+                <p>For any comment, suggestion, improvement, critique, please do not hesitate to contact directly <a href="https://essepuntato.it">Silvio Peroni</a>, who is responsible for the development of all the software and data for this visualisation. You can reach him easily via <a href="mailto:essepuntato@gmail.com">email</a> or <a href="https://twitter.com/essepuntato">Twitter</a>.</p>
+            </div>
+         </div>
+         <footer>
+             <a href="http://opencitations.net" target="_blank"><img src="img/logotype.png" /></a>
+         </footer>
+      </div>
+      
+      <script src="js/ui.js"></script>
+      <script src="js/jquery-3.5.0.min.js"></script>
+      <script src="js/cytoscape.min.js"></script>
+      <script src="js/analysis.js"></script>
+  </body>
+</html>
