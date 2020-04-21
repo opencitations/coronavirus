@@ -23,6 +23,7 @@ var visible_authors = new Set();
 $(document).keypress(
   function(event){
     if (event.which == '13') {
+      filter_author();
       event.preventDefault();
     }
 });
@@ -31,7 +32,7 @@ $.get("data/metadata.json", function(data) {
     $.each(data, function(idx, v) {
       all_data.push({data: v});
       $.each(v.author.split(", "), function(jdx, a) {
-          author_set.add(a);
+          author_set.add(a.toLowerCase().replace(/^\s+|\s+$/g, ''));
       });
     });
     $.get("data/citations.json", function(data) {
@@ -61,25 +62,44 @@ function redraw_authors() {
 
 function filter_author() {
     var author_to_filter = document.getElementById("authorToFilter").value.toLowerCase().replace(/^\s+|\s+$/g, '');
-    if (!visible_authors.has(author_to_filter)) {
-        visible_authors.add(author_to_filter);
-        document.getElementById("authorToFilter").value = null;
-        $("#authortag").append("<button id='" + author_to_filter + "' type='button' onclick='remove_author(this.id)' title='click to remove'>" + author_to_filter + "</button>");
-        var array_visible_authors = Array.from(visible_authors);
-        cy.nodes().filter(function (n, idx) {
-            if (_.isEmpty(_.intersection(n.data("author").toLowerCase().split(", "), array_visible_authors))) {
-                n.style("visibility", "hidden");
-            } else {
-                n.style("visibility", "visible");
+    if (author_to_filter !== "") {
+        if (author_set.has(author_to_filter)) {
+            $("#notauthor").hide();
+            if (!visible_authors.has(author_to_filter)) {
+                visible_authors.add(author_to_filter);
+                document.getElementById("authorToFilter").value = null;
+                $("#authortag").append("<span id='" + author_to_filter + "'>" + author_to_filter + "<button class='pure-button' onclick='remove_author(\"" + author_to_filter + "\")' title='click to remove the author'>X</button></span>");
+                var array_visible_authors = Array.from(visible_authors);
+                cy.nodes().filter(function (n, idx) {
+                    if (_.isEmpty(_.intersection(n.data("author").toLowerCase().split(", "), array_visible_authors))) {
+                        n.style("visibility", "hidden");
+                    } else {
+                        n.style("visibility", "visible");
+                    }
+                });
+                select_node(node_selected);
             }
-        });
-        select_node(node_selected);
+        } else {
+            $("#notauthor").show();
+        }
     }
 }
 
 function remove_author(button_id) {
     $("#" + button_id).remove();
     visible_authors.delete(button_id);
+    document.getElementById("authorToFilter").value = "";
+    $("#notauthor").hide();
+    redraw_authors();
+}
+
+function clear_all() {
+    for (let author of visible_authors) {
+        $("#" + author).remove();
+        visible_authors.delete(author);
+    }
+    document.getElementById("authorToFilter").value = "";
+    $("#notauthor").hide();
     redraw_authors();
 }
 
@@ -144,14 +164,17 @@ function select_node(node) {
         reference_edges.style("line-color", edge_colour_citation).style("visibility", "visible");
         citation_edges.style("line-color", edge_colour_reference).style("visibility", "visible");
 
-        $("#ref").text(node.data("author") + " (" + node.data("year") + "). " + node.data("title") + ". ");
-        $("#ref").append("<em>" + node.data("source_title") + ". </em>");
-        $("#ref").append("<a target='_blank' href='https://doi.org/" + node.data("id") + "'>https://doi.org/" + node.data("id") + "</a>");
-        $("#cited").text("Cited by " + node.data("count") + " bibliographic resources.");
+        if (node.visible()) {
+            $("#ref").text(node.data("author") + " (" + node.data("year") + "). " + node.data("title") + ". ");
+            $("#ref").append("<em>" + node.data("source_title") + ". </em>");
+            $("#ref").append("<a target='_blank' href='https://doi.org/" + node.data("id") + "'>https://doi.org/" + node.data("id") + "</a>");
+            $("#cited").text("Cited by " + node.data("count") + " bibliographic resources.");
+        } else {
+            default_vis();
+        }
+        
     }
 }
-
-function doNothing(e) {}
 
 function default_vis() {
     cy.nodes().style('border-color', border_colour_init);
