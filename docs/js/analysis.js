@@ -168,7 +168,7 @@ function select_node(node) {
             $("#ref").text(node.data("author") + " (" + node.data("year") + "). " + node.data("title") + ". ");
             $("#ref").append("<em>" + node.data("source_title") + ". </em>");
             $("#ref").append("<a target='_blank' href='https://doi.org/" + node.data("id") + "'>https://doi.org/" + node.data("id") + "</a>");
-            $("#cited").text("Cited by " + node.data("count") + " bibliographic resources.");
+            $("#cited").text("Cited by " + node.data("count") + " articles in the Coronavirus Open Citations dataset.");
         } else {
             default_vis();
         }
@@ -218,7 +218,11 @@ function create_graph(data) {
       levelWidth: function(nodes){
           return nodes.maxDegree() / 8;
       }
-    }
+    },
+    userZoomingEnabled: false,
+    userPanningEnabled: false,
+    selectionType: "single",
+    autoungrabify: true
 
   });
   
