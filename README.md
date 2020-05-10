@@ -1,6 +1,6 @@
-# Coronavirus open citations visualisation repository
+# Coronavirus Open Citations Dataset repository
 
-This repository contains all the code, data, and documents used for the [Coronavirus open citations visualisation](https://opencitations.github.io/coronavirus/). 
+This repository contains all the code, data, and documents used for the website of the [Coronavirus Open Citations Dataset](https://opencitations.github.io/coronavirus/). 
 
 The `data.ipynb` notebook contains all the code used for generating the data for the visualisation. The full data are available in the directory `data/`, while the data used for the visualisation are available in the directory `docs/data/`.
 
