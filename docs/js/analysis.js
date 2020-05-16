@@ -118,9 +118,9 @@ function select_node_color(y) {
 
 function select_node_shape(cc) {
     var cci = parseInt(cc);
-    if (cci <= 10) {
+    if (cci <= 50) {
         return "circle";
-    } else if (cci <= 100) {
+    } else if (cci <= 200) {
         return "diamond";
     }  else if (cci <= 500) {
         return "pentagon";
